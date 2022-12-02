@@ -1,28 +1,14 @@
-/*-
- * =====LICENSE-START=====
- * Java 11 Application
- * ------
- * Copyright (C) 2020 - 2022 Organization Name
- * ------
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * =====LICENSE-END=====
- */
+/*******************************************************************************
+ * Copyright (c) 2020-2022,  Olivier Debenath
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Olivier Debenath <olivier@debenath.ch> - initial implementation
+ *    
+ *******************************************************************************/
 package ch.framsteg.hl7.drichem.server.elexis;
 
 import java.io.IOException;
@@ -41,10 +27,20 @@ import ch.framsteg.hl7.drichem.server.identification.LaborIdentifier;
 import ch.framsteg.hl7.drichem.server.identification.PatientIdentifier;
 import ch.framsteg.hl7.drichem.server.persistence.FileWriter;
 
-
 public class ElexisAdapter implements ReceivingApplication {
 
+	private final static String RECEIVED_MESSAGE = "Received message:\\n";
+	private final static String NEWLINE = "\n\n";
+	private final static String EXTRACTOR_CREATED = "IdExtractor created";
+	private final static String LAB_IDENTIFIFER_CREATED = "LaborIdentifier created";
+	private final static String PAT_IDENTIFIFER_CREATED = "PatientIdentifier created";
+	private final static String FILE_WRITER_CREATED = "FileWriter created";
+	private final static String FILE_WRITTEN = "File written to disc";
+	private final static String ACK_CREATED = "ACK created";
+	private final static String EXCEPTION = "Exception occured: ";
+
 	private Properties properties;
+
 	private static Logger logger = Logger.getLogger(ElexisAdapter.class);
 
 	public ElexisAdapter(Properties properties) {
@@ -55,31 +51,33 @@ public class ElexisAdapter implements ReceivingApplication {
 	public Message processMessage(Message message, Map<String, Object> metadata)
 			throws ReceivingApplicationException, HL7Exception {
 
-		String encodedMessage = new DefaultHapiContext().getPipeParser().encode(message);
-		logger.info("Received message:\n" + encodedMessage + "\n\n");
-
-		IdExtractor idExtractor = new IdExtractor(encodedMessage, properties);
-		logger.info("IdExtractor created");
-		LaborIdentifier laborIdentifier = new LaborIdentifier(properties);
-		logger.info("LaborIdentifier created");
-		PatientIdentifier patientIdentifier = new PatientIdentifier(properties);
-		logger.info("PatientIdentifier created");
-		String id = idExtractor.extract();
-		FileWriter fileWriter = new FileWriter(properties,
-				patientIdentifier.identify(laborIdentifier.identify(encodedMessage), id), id);
-		logger.info("FileWriter created");
-		fileWriter.write();
-		logger.info("File written to disc");
+		try (DefaultHapiContext defaultHapiContext = new DefaultHapiContext()) {
+			String encodedMessage = defaultHapiContext.getPipeParser().encode(message);
+			logger.info(RECEIVED_MESSAGE + encodedMessage + NEWLINE);
+			IdExtractor idExtractor = new IdExtractor(encodedMessage, properties);
+			logger.info(EXTRACTOR_CREATED);
+			LaborIdentifier laborIdentifier = new LaborIdentifier(properties);
+			logger.info(LAB_IDENTIFIFER_CREATED);
+			PatientIdentifier patientIdentifier = new PatientIdentifier(properties);
+			logger.info(PAT_IDENTIFIFER_CREATED);
+			String id = idExtractor.extract();
+			FileWriter fileWriter = new FileWriter(properties,
+					patientIdentifier.identify(laborIdentifier.identify(encodedMessage), id), id);
+			logger.info(FILE_WRITER_CREATED);
+			fileWriter.write();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		logger.info(FILE_WRITTEN);
 		Message ACK = null;
 		try {
 			ACK = message.generateACK();
-			logger.info("ACK created");
+			logger.info(ACK_CREATED);
 			logger.info(ACK);
-		} catch (HL7Exception e) {
-			logger.error("Error",e);
-		} catch (IOException e) {
-			logger.error("Error",e);
-		}
+		} catch (HL7Exception | IOException e) {
+			logger.error(EXCEPTION, e);
+		} 
 		return ACK;
 	}
 

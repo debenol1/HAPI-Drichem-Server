@@ -1,28 +1,14 @@
-/*-
- * =====LICENSE-START=====
- * Java 11 Application
- * ------
- * Copyright (C) 2020 - 2022 Organization Name
- * ------
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * =====LICENSE-END=====
- */
+/*******************************************************************************
+ * Copyright (c) 2020-2022,  Olivier Debenath
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Olivier Debenath <olivier@debenath.ch> - initial implementation
+ *    
+ *******************************************************************************/
 package ch.framsteg.hl7.drichem.server.identification;
 
 import java.util.Properties;
@@ -30,6 +16,12 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 public class LaborIdentifier {
+	
+	private final static String ID_POSITION = "Identify position to insert lab ID";
+	private final static String POSITION_FOUND = "Found position at ";
+	private final static String LAB_ID = "labor.id";
+	private final static String LAB_ID_INSERTED = "Inserted lab ID ";
+	
 	private final String SEGMENT_FIELD_DELIMITER = "|";
 
 	private Properties properties;
@@ -41,12 +33,12 @@ public class LaborIdentifier {
 
 	// Add the lab ID
 	public String identify(String message) {
-		logger.info("Identify position to insert lab ID");
+		logger.info(ID_POSITION);
 		int position = ordinalIndexOf(message, SEGMENT_FIELD_DELIMITER, 3);
-		logger.info("Found position at " + position);
+		logger.info(POSITION_FOUND + position);
 		StringBuilder stringBuilder = new StringBuilder(message);
-		stringBuilder.insert(position, properties.getProperty("labor.id"));
-		logger.info("Inserted lab ID " + properties.getProperty("labor.id"));
+		stringBuilder.insert(position, properties.getProperty(LAB_ID));
+		logger.info(LAB_ID_INSERTED + properties.getProperty(LAB_ID));
 		return stringBuilder.toString();
 	}
 

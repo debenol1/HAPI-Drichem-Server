@@ -1,28 +1,14 @@
-/*-
- * =====LICENSE-START=====
- * Java 11 Application
- * ------
- * Copyright (C) 2020 - 2022 Organization Name
- * ------
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * =====LICENSE-END=====
- */
+/*******************************************************************************
+ * Copyright (c) 2020-2022,  Olivier Debenath
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Olivier Debenath <olivier@debenath.ch> - initial implementation
+ *    
+ *******************************************************************************/
 package ch.framsteg.hl7.drichem.server.elexis.properties;
 
 import java.nio.file.Files;
@@ -35,6 +21,16 @@ import ch.framsteg.hl7.drichem.server.interfaces.Validator;
 
 public class PropertiesValidator  implements Validator<Properties> {
 
+	private final static String PORT = "port";
+	private final static String VALID = " is valid ";
+	private final static String OUTPUT = "output.dir";
+	private final static String PATH_EXISTS = " exists";
+	private final static String DIRECTORY = " is directory";
+	private final static String READABLE = " is readable";
+	private final static String NOT_READABLE = " is not readable";
+	private final static String NOT_DIRECTORY = " is not a directory";
+	private final static String NOT_EXISTING = " does not exist";
+	
 	private static Logger logger = Logger.getLogger(PropertiesValidator.class);
 
 	@Override
@@ -42,10 +38,10 @@ public class PropertiesValidator  implements Validator<Properties> {
 		boolean validPort = false;
 		boolean validOutput = false;
 
-		int port = Integer.parseInt(properties.getProperty("port"));
+		int port = Integer.parseInt(properties.getProperty(PORT));
 		validPort = (port > 100 && port < 65535) ? true : false;
-		logger.info(port + " is valid " + validPort);
-		validOutput = validate(properties.getProperty("output.dir"));
+		logger.info(port + VALID + validPort);
+		validOutput = validate(properties.getProperty(OUTPUT));
 
 		return validPort && validOutput;
 	}
@@ -53,20 +49,20 @@ public class PropertiesValidator  implements Validator<Properties> {
 	private boolean validate(String path) {
 		boolean valid = false;
 		if (Files.exists(Paths.get(path))) {
-			logger.info(path + " exists");
+			logger.info(path + PATH_EXISTS);
 			if (Files.isDirectory(Paths.get(path))) {
-				logger.info(path + " is directory");
+				logger.info(path + DIRECTORY);
 				if (Files.isReadable(Paths.get(path))) {
-					logger.info(path + " is readable");
+					logger.info(path + READABLE);
 					valid = true;
 				} else {
-					logger.error(path + " is not readable");
+					logger.error(path + NOT_READABLE);
 				}
 			} else {
-				logger.error(path + " is not a directory");
+				logger.error(path + NOT_DIRECTORY);
 			}
 		} else {
-			logger.error(path + " does not exist");
+			logger.error(path + NOT_EXISTING);
 		}
 		return valid;
 	}

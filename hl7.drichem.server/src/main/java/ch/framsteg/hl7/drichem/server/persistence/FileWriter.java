@@ -1,28 +1,14 @@
-/*-
- * =====LICENSE-START=====
- * Java 11 Application
- * ------
- * Copyright (C) 2020 - 2022 Organization Name
- * ------
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * =====LICENSE-END=====
- */
+/*******************************************************************************
+ * Copyright (c) 2020-2022,  Olivier Debenath
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Olivier Debenath <olivier@debenath.ch> - initial implementation
+ *    
+ *******************************************************************************/
 package ch.framsteg.hl7.drichem.server.persistence;
 
 import java.io.BufferedWriter;
@@ -32,6 +18,14 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 public class FileWriter {
+	
+	private final static String DASH = "-";
+	private final static String EXTENSION = "extension";
+	private final static String OUTPUT_CREATED = "Output file created ";
+	private final static String OUTPUT_DIR = "output.dir";
+	private final static String BW_CREATED = "BufferedWriter created";
+	private final static String MSG_WRITTEN = "Message written to file"; 
+	private final static String EXCEPTION = "Exception occured: ";
 	
 	private Properties properties;
 	private String message;
@@ -45,18 +39,18 @@ public class FileWriter {
 	}
 
 	public void write() {
-		String filename = id + "-" + new Long(new java.util.Date().getTime()).toString()
-				+ properties.getProperty("extension");
-		logger.info("Output file created " + filename);
+		String filename = id + DASH + Long.toString(new java.util.Date().getTime())
+				+ properties.getProperty(EXTENSION);
+		logger.info(OUTPUT_CREATED + filename);
 		try {
 			BufferedWriter writer = new BufferedWriter(
-					new java.io.FileWriter(properties.getProperty("output.dir") + filename));
-			logger.info("BufferedWriter created");
+					new java.io.FileWriter(properties.getProperty(OUTPUT_DIR) + filename));
+			logger.info(BW_CREATED);
 			writer.write(message.toString());
-			logger.info("Message writed to file");
-			writer.close();
+			logger.info(MSG_WRITTEN);
+			writer.close();					
 		} catch (IOException e) {
-			logger.error("Error", e);
+			logger.error(EXCEPTION, e);
 		}
 	}
 }
