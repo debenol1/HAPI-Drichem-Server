@@ -8,10 +8,8 @@ HAPI drichem service (HDS) acts as an intermediate socket server between a Fujit
 * Fujitsu drichem host (FDH) with Ethernet connection to the HAPI drichem service HDS
 * HAPI drichem service (HDS) with Ethernet connection to the Elexis DB
 
-> **_NOTE:_**  The note content.
-
 ## Build
-To build the HAPI drichem service (HDS) binaries change to the source directory where the pom.xml resides and enter the following commans:
+Before building the package, customize the **/src/main/resources/log4j.properties (log4j.appender.R.File)** file: enter the path to the **LOG_DIRECTORY**. Change to the source directory where the pom.xml resides and enter the following command:
 
 	mvn install
 	
@@ -41,8 +39,6 @@ Next, the **LOG_DIRECTORY** must be created. It must be writeable as well
 	sudo mkdir /PATH_TO_LOG_DIRECTORY
 	sudo chmod 0666 /PATH_TO_LOG_DIRECTORY
 	
-In order to log properly, the **LOG_DIRECTORY** must be registered in **log4j.properties** (log4j.appender.R.File) which resides within the HAPI_DRICHEM.jar:/src/main/resources.
-
 Last, the **BASE_DIRECTORY** needs to be created. Here the HAPI drichem service binaries will be stored:
 
 	sudo mkdir /PATH_TO_BASE_DIRECTORY
