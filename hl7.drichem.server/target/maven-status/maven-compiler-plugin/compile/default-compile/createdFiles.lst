@@ -1,0 +1,13 @@
+ch/framsteg/hl7/drichem/server/interfaces/Validator.class
+ch/framsteg/hl7/drichem/server/elexis/DrichemConnectionListener.class
+ch/framsteg/hl7/drichem/server/elexis/properties/PropertiesValidator.class
+ch/framsteg/hl7/drichem/server/elexis/properties/PropertiesLoader.class
+ch/framsteg/hl7/drichem/server/identification/PatientIdentifier.class
+ch/framsteg/hl7/drichem/server/elexis/DrichemExceptionHandler.class
+ch/framsteg/hl7/drichem/server/identification/IdExtractor.class
+ch/framsteg/hl7/drichem/server/interfaces/Loader.class
+ch/framsteg/hl7/drichem/server/elexis/ElexisAdapter.class
+ch/framsteg/hl7/drichem/server/identification/LaborIdentifier.class
+ch/framsteg/hl7/drichem/server/persistence/FileWriter.class
+ch/framsteg/hl7/drichem/server/Launcher.class
+ch/framsteg/hl7/drichem/server/elexis/DrichemMessageReceiver.class
