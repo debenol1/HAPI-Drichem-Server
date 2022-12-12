@@ -59,7 +59,7 @@ public class PatientIdentifier {
 		String user = properties.getProperty(JDBC_USER);
 		String password = properties.getProperty(JDBC_PW);
 		StringBuilder modifiedMessage = null;
-
+		
 		try {
 			logger.info(CONN_ESTABLISHED);
 			Connection conn = DriverManager.getConnection(url, user, password);
@@ -76,7 +76,6 @@ public class PatientIdentifier {
 				}
 				birthdate = rs.getString(3);
 			}
-
 			rs.close();
 			st.close();
 			logger.info(CREATE_PID);

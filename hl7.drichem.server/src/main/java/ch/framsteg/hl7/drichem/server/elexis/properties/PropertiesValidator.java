@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 
 import ch.framsteg.hl7.drichem.server.interfaces.Validator;
 
+/* Tests the properties in the application.properties */
 public class PropertiesValidator  implements Validator<Properties> {
 
 	private final static String PORT = "port";
@@ -39,8 +40,10 @@ public class PropertiesValidator  implements Validator<Properties> {
 		boolean validOutput = false;
 
 		int port = Integer.parseInt(properties.getProperty(PORT));
+		// Tests the TCP/IP port
 		validPort = (port > 100 && port < 65535) ? true : false;
 		logger.info(port + VALID + validPort);
+		// Tests the path to the output directory
 		validOutput = validate(properties.getProperty(OUTPUT));
 
 		return validPort && validOutput;

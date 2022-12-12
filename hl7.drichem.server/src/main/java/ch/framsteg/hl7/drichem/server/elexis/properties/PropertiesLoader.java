@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 
 import ch.framsteg.hl7.drichem.server.interfaces.Loader;
 
+/* Loads the application.properties which is defined as a parameter */
 public class PropertiesLoader implements Loader<Properties> {
 
 	private final static String PATH_EXISTS = " exists";
@@ -37,21 +38,27 @@ public class PropertiesLoader implements Loader<Properties> {
 	@Override
 	public Properties load(String path) throws FileNotFoundException, IOException {
 		Properties properties = new Properties();
+		// Tests whether the path to the application.properties exists
 		if (Files.exists(Paths.get(path))) {
 			logger.info(path + PATH_EXISTS);
+			// Tests whether the path points to a regular file
 			if (Files.isRegularFile(Paths.get(path))) {
 				logger.info(path + REGULAR_FILE);
+				// Tests whether the application.properties can be read
 				if (Files.isReadable(Paths.get(path))) {
 					logger.info(path + READABLE_FILE);
 					logger.info(LOAD_PROPERTIES_FILE + path);
 					properties.load(new FileInputStream(path));
 				} else {
+					// File is not readable
 					logger.error(path + NOT_READABLE_FILE);
 				}
 			} else {
+				// Path does not point to a regular file
 				logger.error(path + NOT_REGULAR_FILE);
 			}
 		} else {
+			// Path points to a non existing file
 			logger.error(path + NOT_EXISTING_FILE);
 		}
 		return properties;

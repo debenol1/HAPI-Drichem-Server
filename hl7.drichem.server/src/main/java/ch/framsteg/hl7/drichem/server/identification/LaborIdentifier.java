@@ -15,6 +15,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+
 public class LaborIdentifier {
 	
 	private final static String ID_POSITION = "Identify position to insert lab ID";

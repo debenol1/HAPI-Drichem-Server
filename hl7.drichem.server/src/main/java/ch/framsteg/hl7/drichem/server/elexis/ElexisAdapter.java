@@ -54,20 +54,23 @@ public class ElexisAdapter implements ReceivingApplication {
 		try (DefaultHapiContext defaultHapiContext = new DefaultHapiContext()) {
 			String encodedMessage = defaultHapiContext.getPipeParser().encode(message);
 			logger.info(RECEIVED_MESSAGE + encodedMessage + NEWLINE);
+			// patID is being extracted from the HL7 message
 			IdExtractor idExtractor = new IdExtractor(encodedMessage, properties);
 			logger.info(EXTRACTOR_CREATED);
+			// labID is being extracted from the HL7 message
 			LaborIdentifier laborIdentifier = new LaborIdentifier(properties);
 			logger.info(LAB_IDENTIFIFER_CREATED);
+			// Patient is being resolved
 			PatientIdentifier patientIdentifier = new PatientIdentifier(properties);
 			logger.info(PAT_IDENTIFIFER_CREATED);
 			String id = idExtractor.extract();
+			// The HL7 message is being written to the filesystem. The filename starts with the patID
 			FileWriter fileWriter = new FileWriter(properties,
 					patientIdentifier.identify(laborIdentifier.identify(encodedMessage), id), id);
 			logger.info(FILE_WRITER_CREATED);
 			fileWriter.write();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		logger.info(FILE_WRITTEN);
 		Message ACK = null;

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package ch.framsteg.hl7.drichem.server.elexis;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -21,6 +20,7 @@ import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 
+/* Starts the socket server which listens on the port and processes each message */
 public class DrichemMessageReceiver {
 
 	private final static String PORT = "port";
@@ -47,7 +47,8 @@ public class DrichemMessageReceiver {
 		int port = Integer.parseInt(properties.getProperty(PORT));
 		boolean useTls = false;
 
-		try (HapiContext context = new DefaultHapiContext()) {
+		try {
+			HapiContext context = new DefaultHapiContext();
 			logger.info(CREATING_CTX);
 			HL7Service server = context.newServer(port, useTls);
 			logger.info(CREATING_SERVER);
@@ -62,7 +63,7 @@ public class DrichemMessageReceiver {
 			logger.info(SETTING_EXCEPTION_HANDLER);
 			server.startAndWait();
 			logger.info(SERVER_STARTED);
-		} catch (InterruptedException | IOException e) {
+		} catch (InterruptedException e ) {
 			logger.error(EXCEPTION, e);
 			e.printStackTrace();
 		}
